@@ -51,8 +51,8 @@ function getCircleCircumference(radius) {
  *  10, 0  => 5
  *  -3, 3  => 0
  */
-function getAverage(/* value1, value2 */) {
-  throw new Error('Not implemented');
+function getAverage(value1, value2) {
+  return (BigInt(value1) + BigInt(value2)) / BigInt(2);
 }
 
 /**
@@ -180,8 +180,9 @@ function getParallelepipedDiagonal(a, b, c) {
  *   1678, 2  => 1700
  *   1678, 3  => 2000
  */
-function roundToPowerOfTen(/* num, pow */) {
-  throw new Error('Not implemented');
+function roundToPowerOfTen(num, pow) {
+  if (!pow) return num;
+  return Math.round(num / 10 ** pow) * 10 ** pow;
 }
 
 /**
