@@ -123,6 +123,11 @@ function isTriangle(a, b, c) {
  */
 function doRectanglesOverlap(/* rect1, rect2 */) {
   throw new Error('Not implemented');
+  // if (rect2.top >= rect1.top + rect1.height) return false;
+  // if (rect2.top + rect2.height <= rect1.top) return false;
+  // if (rect2.left >= rect1.left + rect2.width) return false;
+  // if (rect2.left + rect2.width <= rect2.left) return false;
+  // return true;
 }
 
 
@@ -278,8 +283,9 @@ function isCreditCardNumber(/* ccn */) {
  *   10000 ( 1+0+0+0+0 = 1 ) => 1
  *   165536 (1+6+5+5+3+6 = 26,  2+6 = 8) => 8
  */
-function getDigitalRoot(/* num */) {
-  throw new Error('Not implemented');
+function getDigitalRoot(num) {
+  const sum = String(num).split('').map(Number).reduce((a, b) => a + b);
+  return sum > 9 ? getDigitalRoot(sum) : sum;
 }
 
 
@@ -329,8 +335,8 @@ function isBracketsBalanced(/* str */) {
  *    365, 4  => '11231'
  *    365, 10 => '365'
  */
-function toNaryString(/* num, n */) {
-  throw new Error('Not implemented');
+function toNaryString(num, n) {
+  return num.toString(n);
 }
 
 
@@ -346,8 +352,16 @@ function toNaryString(/* num, n */) {
  *   ['/web/assets/style.css', '/.bin/mocha',  '/read.me'] => '/'
  *   ['/web/favicon.ico', '/web-scripts/dump', '/verbalizer/logs'] => '/'
  */
-function getCommonDirectoryPath(/* pathes */) {
-  throw new Error('Not implemented');
+function getCommonDirectoryPath(pathes) {
+  let path = '';
+  if (pathes.every((el) => el.startsWith('/'))) path += '/';
+  const splittedPath = pathes[0].split('/');
+  for (let i = 0; i < splittedPath.length; i += 1) {
+    if (splittedPath[i] && pathes.every((el) => el.split('/').includes(splittedPath[i]))) {
+      path += `${splittedPath[i]}/`;
+    }
+  }
+  return path;
 }
 
 
@@ -404,8 +418,22 @@ function getMatrixProduct(/* m1, m2 */) {
  *    [    ,   ,    ]]
  *
  */
-function evaluateTicTacToePosition(/* position */) {
-  throw new Error('Not implemented');
+function evaluateTicTacToePosition(position) {
+  const mainDiag = new Set([position[0][0], position[1][1], position[2][2]]);
+  const secDiag = new Set([position[1][1], position[0][2], position[2][0]]);
+  if (mainDiag.size === 1) return Array.from(mainDiag)[0];
+  if (secDiag.size === 1) return Array.from(secDiag)[0];
+  for (let i = 0; i < position.length; i += 1) {
+    if (position[i].length === 3 && new Set(position[i]).size === 1 && position[i][0]) {
+      return position[i][0];
+    }
+    const column = [];
+    for (let j = 0; j < 3; j += 1) {
+      column.push(position[j][i]);
+    }
+    if (new Set(column).size === 1) return column[0];
+  }
+  return undefined;
 }
 
 
