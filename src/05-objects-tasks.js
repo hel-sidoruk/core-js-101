@@ -146,7 +146,6 @@ const cssSelectorBuilder = {
   },
 };
 
-
 module.exports = {
   Rectangle,
   getJSON,

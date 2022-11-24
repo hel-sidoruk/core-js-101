@@ -265,8 +265,24 @@ function reverseInteger(num) {
  *   5436468789016589 => false
  *   4916123456789012 => false
  */
-function isCreditCardNumber(/* ccn */) {
-  throw new Error('Not implemented');
+function isCreditCardNumber(ccn) {
+  let checkSum = 0;
+  let even = false;
+  const strCcn = String(ccn);
+
+  for (let i = strCcn.length - 1; i >= 0; i -= 1) {
+    let num = +strCcn[i];
+
+    if (even) {
+      num *= 2;
+      if ((num) > 9) num -= 9;
+    }
+
+    checkSum += num;
+    even = !even;
+  }
+
+  return (checkSum % 10) === 0;
 }
 
 /**
@@ -310,8 +326,9 @@ function getDigitalRoot(num) {
  *   '{)' = false
  *   '{[(<{[]}>)]}' = true
  */
-function isBracketsBalanced(/* str */) {
-  throw new Error('Not implemented');
+function isBracketsBalanced(str) {
+  if (!str) return true;
+  return str.match(/{}|<>|\(\)|\[\]/) ? isBracketsBalanced(str.replace(/{}|<>|\(\)|\[\]/, '')) : false;
 }
 
 
@@ -383,8 +400,21 @@ function getCommonDirectoryPath(pathes) {
  *                         [ 6 ]]
  *
  */
-function getMatrixProduct(/* m1, m2 */) {
-  throw new Error('Not implemented');
+function getMatrixProduct(m1, m2) {
+  const matrix = [];
+  const rowsM1 = m1.length;
+  const rowsM2 = m2.length;
+  const colsM2 = m2[0].length;
+  if (rowsM1 !== colsM2) return false;
+  for (let i = 0; i < rowsM1; i += 1) matrix.push([]);
+  for (let i = 0; i < colsM2; i += 1) {
+    for (let j = 0; j < rowsM1; j += 1) {
+      let t = 0;
+      for (let k = 0; k < rowsM2; k += 1) t += m1[j][k] * m2[k][i];
+      matrix[j][i] = t;
+    }
+  }
+  return matrix;
 }
 
 
