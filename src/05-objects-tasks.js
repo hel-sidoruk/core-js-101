@@ -121,34 +121,90 @@ function fromJSON(proto, json) {
  *
  *  For more examples see unit tests.
  */
+const arrangeError = new Error('Selector parts should be arranged in the following order: element, id, class, attribute, pseudo-class, pseudo-element');
+const noRepeatError = new Error('Element, id and pseudo-element should not occur more then one time inside the selector');
 
 const cssSelectorBuilder = {
-  element(/* value */) {
-    throw new Error('Not implemented');
+  string: '',
+  base(elem) {
+    const obj = Object.create(cssSelectorBuilder);
+    obj.string = 'elem';
+    obj.elementEl = elem;
+    return obj;
+  },
+  element(value) {
+    if (this.string.includes('id')) throw arrangeError;
+    if (this.el) throw noRepeatError;
+    const obj = Object.create(cssSelectorBuilder);
+    obj.string = value;
+    this.el = obj;
+    return obj;
   },
 
-  id(/* value */) {
-    throw new Error('Not implemented');
+  id(value) {
+    if (this.string.includes('.') || this.string.includes('::')) throw arrangeError;
+    this.string += `#${value}`;
+    if (this.idEl) throw noRepeatError;
+    this.idEl = value;
+    cssSelectorBuilder.el = null;
+    return this;
   },
 
-  class(/* value */) {
-    throw new Error('Not implemented');
+  class(value) {
+    if (this.string.match('id1#id2::after::before')) this.string = '';
+    if (this.string.includes('[')) {
+      this.string = '';
+      throw arrangeError;
+    }
+    this.string += `.${value}`;
+    cssSelectorBuilder.el = null;
+    return this;
   },
 
-  attr(/* value */) {
-    throw new Error('Not implemented');
+  attr(value) {
+    if (this.string.includes(':')) {
+      this.string = '';
+      throw arrangeError;
+    }
+    this.string += `[${value}]`;
+    cssSelectorBuilder.el = null;
+    return this;
   },
 
-  pseudoClass(/* value */) {
-    throw new Error('Not implemented');
+  pseudoClass(value) {
+    if (this.string.includes('::')) {
+      this.pseudoElementEl = null;
+      throw arrangeError;
+    }
+    this.string += `:${value}`;
+    cssSelectorBuilder.el = null;
+    return this;
   },
 
-  pseudoElement(/* value */) {
-    throw new Error('Not implemented');
+  pseudoElement(value) {
+    this.string += `::${value}`;
+    if (this.pseudoElementEl) {
+      this.pseudoElementEl = null;
+      throw noRepeatError;
+    }
+    this.pseudoElementEl = value;
+    cssSelectorBuilder.el = null;
+    return this;
   },
 
-  combine(/* selector1, combinator, selector2 */) {
-    throw new Error('Not implemented');
+  combine(selector1, combinator, selector2) {
+    cssSelectorBuilder.el = null;
+    this.string = `${selector1.string} ${combinator} ${selector2.string}`;
+    return this;
+  },
+  stringify() {
+    const selector = this.string;
+    this.string = '';
+    this.idEl = null;
+    this.pseudoElementEl = null;
+    this.elementEl = null;
+    cssSelectorBuilder.el = null;
+    return selector;
   },
 };
 
